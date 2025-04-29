@@ -1,21 +1,24 @@
-FROM node:18
+FROM node:18 as base
 
 WORKDIR /usr/src/app
 
-# Install only production dependencies first (better cache)
+FROM base as production
+
+ENV NODE_PATH=./dist
+
+RUN npm run build
+
 COPY package*.json ./
 RUN npm install
 
-# Install dev tools like typescript
-RUN npm install -g typescript ts-node nodemon
+RUN npm install -g typescript
 
-# Copy everything
 COPY . .
 
-# Expose port
+RUN tsc
+
 EXPOSE 3000
 
-# Run with nodemon + ts-node (no manual build, live reload)
 CMD ["npm", "run", "dev"]
 
 FROM postgres:15

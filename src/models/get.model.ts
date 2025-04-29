@@ -32,3 +32,11 @@ export const getAnswersForQuestion = async (questionId: number) => {
   `, [questionId])
   return result.rows
 }
+
+// Find user by name
+export const findUserByName = async (name: string) => {
+  const result = await pool.query(`
+    SELECT * FROM users WHERE name = $1
+  `, [name])
+  return result.rows[0] || null
+}

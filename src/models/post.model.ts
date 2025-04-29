@@ -15,28 +15,17 @@ export const addAnswerToQuestion = async (
   return result.rows[0]
 }
 
-// Delete a user and all related data
-export const deleteUserAndData = async (userId: number) => {
-  const client = await pool.connect()
-  try {
-    await client.query('BEGIN')
-
-    await client.query(`
-      DELETE FROM comments
-      WHERE user_id = $1
-         OR answers_id IN (SELECT id FROM answers WHERE user_id = $1)
-         OR questions_id IN (SELECT id FROM questions WHERE user_id = $1)
-    `, [userId])
-
-    await client.query(`DELETE FROM answers WHERE user_id = $1`, [userId])
-    await client.query(`DELETE FROM questions WHERE user_id = $1`, [userId])
-    await client.query(`DELETE FROM users WHERE id = $1`, [userId])
-
-    await client.query('COMMIT')
-  } catch (error) {
-    await client.query('ROLLBACK')
-    throw error
-  } finally {
-    client.release()
-  }
+// Create a new user
+export const createUser = async ({
+ name,
+  passwordHash,
+}: {
+  name: string
+  passwordHash: string
+}) => {
+  const result = await pool.query(
+    `INSERT INTO users (name, passwordHash) VALUES ($1, $2) RETURNING *`,
+    [name, passwordHash]
+  )
+  return result.rows[0]
 }
