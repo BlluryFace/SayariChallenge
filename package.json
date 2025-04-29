@@ -5,7 +5,7 @@
   "main": "dist/app.js",
   "scripts": {
     "start": "NODE_PATH=./dist node dist/app.js",
-    "dev": "nodemon app.ts",
+    "dev": "nodemon",
     "build": "tsc"
   },
   "dependencies": {
