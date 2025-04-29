@@ -19,28 +19,36 @@ router.get("/:questionId/answers", async (req, res) => {
 interface AuthenticatedRequest extends Request {
   user?: JwtPayload | string
 }
-// POST /:questionId/answers – only accessible with valid JWT
+// 2.  POST /:questionId/answers – only accessible with valid JWT
 router.post("/:questionId/answers", async (req , res) => {
-  const token = req.headers.authorization
+  const token : string | undefined = req.headers.authorization
 
   if (!token) {
     return res.status(401).json({ message: "Unauthorized: No token provided" })
   }
 
-  let decoded: any
+  let decoded: string | JwtPayload
   try {
     decoded = jwt.verify(token, process.env.JWT_SECRET as string)
+    if (typeof decoded === "string") {
+      return res.status(401).json({ message: "Unauthorized: Invalid token" })
+    }
   } catch (err) {
     return res.status(401).json({ message: "Unauthorized: Invalid token" })
   }
 
   try {
-    const questionId = Number(req.params.questionId)
+    const questionId: number = Number(req.params.questionId)
     if (isNaN(questionId)) {
       return res.status(400).json({ error: "Invalid question ID" })
     }
+    interface AnswerInput {
+      body: string
+      accepted: boolean
+      score: number
+    }
 
-    const { body, accepted, score } = req.body
+    const { body, accepted, score }: AnswerInput = req.body
     const user_id = decoded.userId
     const answer = await addAnswerToQuestion(questionId, { body, user_id, accepted, score })
     res.status(201).json(answer)

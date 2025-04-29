@@ -42,9 +42,6 @@ CREATE TABLE comments (
 );
 
 -- Indexes for better JOIN and WHERE performance
+CREATE INDEX idx_user_name ON users(name);
 CREATE INDEX idx_questions_user_id ON questions(user_id);
-CREATE INDEX idx_answers_user_id ON answers(user_id);
 CREATE INDEX idx_answers_questions_id ON answers(questions_id);
-CREATE INDEX idx_comments_user_id ON comments(user_id);
-CREATE INDEX idx_comments_questions_id ON comments(questions_id);
-CREATE INDEX idx_comments_answers_id ON comments(answers_id);

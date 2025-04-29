@@ -7,9 +7,12 @@ import { findUserByName } from '../models/get.model.js';
 import { createUser } from '../models/post.model.js';
 
 const router = Router();
-
+interface User {
+  name : string,
+  password: string
+}
 router.post('/register', async (req: Request, res: Response) => {
-  const { name, password } = req.body;
+  const { name, password }:User = req.body;
 
   // Validate request body
   if (!name || !password) {
@@ -37,7 +40,8 @@ router.post('/register', async (req: Request, res: Response) => {
 
 // POST /api/login - User login and JWT token generation
 router.post('/login', async (req: Request, res: Response) => {
-  const { name, password } = req.body;
+
+  const { name, password }:User = req.body;
 
   if (!name || !password) {
     return res.status(400).json({ message: 'Name and password are required' });
